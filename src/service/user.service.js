@@ -18,6 +18,7 @@ async function login(userData) {
   const user = await prisma.user.findUnique({
     where: { email: userData.email },
     select: {
+      id: true,
       password: true,
       verified: true,
     },
@@ -64,4 +65,26 @@ async function register(userData) {
   }
 }
 
-module.exports = { login, register };
+async function refresh(user) {
+  const accessToken = await generateAccessToken(user);
+
+  if (!accessToken) throw new NotFoundError("Access token not generated");
+
+  return { access_token: accessToken };
+}
+
+async function users() {
+  const users = await prisma.user.findMany({
+    select: {
+      id: true,
+      firstName: true,
+      lastName: true,
+      email: true,
+      verified: true,
+    },
+  });
+
+  return users;
+}
+
+module.exports = { login, register, users, refresh };

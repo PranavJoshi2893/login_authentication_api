@@ -5,8 +5,8 @@ const authenticateToken = (req, res, next) => {
   const token = authHeader && authHeader.split(" ")[1];
 
   if (!token) {
-    return res.status(404).json({
-      name: "NotFoundError",
+    return res.status(401).json({
+      name: "UnauthorizedError",
       message: "Bearer token not available",
     });
   }
